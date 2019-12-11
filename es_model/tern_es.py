@@ -1,3 +1,4 @@
+import json
 
 class TernEsSearch():
     def __init__(self, es_search_obj, es_index, dformat='json', result_size=20, search_filter=None,sort_field=None,scroll='2m', scroll_id=None):
@@ -77,7 +78,7 @@ class TernEsSearch():
         docs = []
         count = len(data)
         total_docs = 0
-        for doc in data:
+        for doc in data['hits']['hits']:
             # csv_doc = self.get_csv_friendly_doc(doc)
             docs.append(doc)
         return {"scroll_id": self.scroll_id,
@@ -85,6 +86,7 @@ class TernEsSearch():
                "returned_docs": count,
                "data": docs
                }
+        # return docs
 
     def get_data_as_csv(self):
         pass
@@ -98,6 +100,7 @@ class TernEsSearch():
             data = self.es_search_obj.scroll(scroll_id=self.scroll_id, scroll=self._scroll) 
         else:
             # Initial scroll by search
+            print("seaching NOWW....")
             data = self.es_search_obj.search(
                 index=self.es_index,
                 scroll=self._scroll,
