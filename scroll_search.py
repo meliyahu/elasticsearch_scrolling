@@ -3,14 +3,21 @@ from elasticsearch import Elasticsearch, helpers
 import logging
 import json
 import os
+import time
 
 # Define config
 host = os.environ.get('ES_HOST', "http://locahost:9200")
 port = 80
 timeout = 1000
+# index = "geology"
 index = "corveg_bioregions"
 doc_type = "doc"
-size = 5
+size = 1000
+# body = {"query": {
+#     "query_string": {
+#       "query": "(geology_unit_method.label:cut OR geology_unit_method.label:map) AND geology_type_result.label:sand"
+#     }
+#   }}
 body = {}
 
 # Init Elasticsearch instance
@@ -18,7 +25,19 @@ es = Elasticsearch(hosts=[host], timeout=timeout)
 
 # Process hits here
 
+def get_formatted_elapsed_time(start_time, end_time):
+    """
+    Nicely formats elapsed time in hours, minutes, seconds
+    :param start_time:
+    :param end_time:
+    :return:
+    """
+    hours, rem = divmod(end_time - start_time, 3600)
+    minutes, seconds = divmod(rem, 60)
+    result = "{:0>2} hours {:0>2} minutes {:05.2f} seconds".format(int(hours), int(minutes), seconds)
 
+    return result
+    
 def process_hits(hits):
     print(f' hits = {len(hits)}')
     for item in hits:
@@ -29,7 +48,7 @@ def process_hits(hits):
 #     print("Index " + index + " not exists")
 #     exit()
 
-
+start_time = time.time()
 # Init scroll by search
 data = es.search(
     index=index,
@@ -37,6 +56,9 @@ data = es.search(
     size=size,
     body=body
 )
+
+count = es.count(index=index)   
+print(f'count = {count}')
 
 # Get the scroll ID
 sid = data['_scroll_id']
@@ -59,3 +81,4 @@ while scroll_size > 0:
     total += scroll_size
 
 print(f'total is { total }')
+print(f'Took {get_formatted_elapsed_time(start_time, time.time())}')
