@@ -1,0 +1,13 @@
+GET /site/_search?scroll=1m
+{
+    "size": 1000, 
+   "query": {
+      "match_all": {}
+   }
+}
+
+GET /_search/scroll
+{
+    "scroll": "1m",
+    "scroll_id" : "DXF1ZXJ5QW5kRmV0Y2gBAAAAAAAJbsYWMGx1b29jLUpSMFdxNDNSdElLVF83Zw=="
+}
