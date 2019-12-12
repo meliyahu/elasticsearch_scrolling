@@ -1,0 +1,46 @@
+#Search After impl
+
+GET site/_search
+{
+  "size": 2,
+  "query": {
+    "match": {
+      "site_sample_level.label": "tertiary site"
+    }
+  },
+  "sort": [
+    {
+      "site_sample_type.label.keyword": {
+        "order": "asc"
+      }
+    },
+    {
+      "_id": {
+        "order": "asc"
+      }
+    }
+  ]
+}
+
+GET site/_search
+{
+  "size": 5,
+  "query": {
+    "match": {
+      "site_sample_level.label": "tertiary site"
+    }
+  },
+  "search_after": ["Belt Transect", "corveg-site-26919"],
+  "sort": [
+    {
+      "site_sample_type.label.keyword": {
+        "order": "asc"
+      }
+    },
+    {
+      "_id": {
+        "order": "asc"
+      }
+    }
+  ]
+}
